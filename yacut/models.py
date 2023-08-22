@@ -49,8 +49,3 @@ class URLMap(db.Model):
         while URLMap.query.filter_by(short=short).first() is not None:
             short = get_random_id(LEN_ID)
         return short
-
-    def from_dict(self, data):
-        for field in ['original', 'short']:
-            if field in data:
-                setattr(self, field, data[field])
