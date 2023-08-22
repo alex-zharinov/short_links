@@ -17,7 +17,19 @@ class URLMap(db.Model):
 
     @validates('original')
     def validate_original(self, key, value):
-        assert url(value)
+        if not url(value):
+            raise ValueError('Неверная ссылка!')
+        return value
+
+    @validates('short')
+    def validate_original(self, key, value):
+        print('value =', type(value))
+        if value == '':
+            value = self.get_unique_short_id()
+        elif not (re.fullmatch(r'^[a-zA-Z0-9]*$', value)) or len(value) > 16:
+            raise ValueError('Указано недопустимое имя для короткой ссылки')
+        elif URLMap.query.filter_by(short=value).first() is not None:
+            raise ValueError(f'Имя "{value}" уже занято.')
         return value
 
     def to_dict(self):
@@ -25,25 +37,18 @@ class URLMap(db.Model):
             url=self.original,
         )
 
-    def get_link_map(self, original, short):
-        setattr(self, 'original', original)
-        setattr(self, 'short', short)
+    @classmethod
+    def create_link_map(cls, url, custom_id):
+        obj = URLMap(original=url, short=custom_id)
+        db.session.add(obj)
+        db.session.commit()
+        return obj
 
-    def get_unique_short_id():
+    def get_unique_short_id(self=None):
         short = get_random_id(LEN_ID)
         while URLMap.query.filter_by(short=short).first() is not None:
             short = get_random_id(LEN_ID)
         return short
-
-    def get_short_id(self, short):
-        if short and short != '':
-            if not (re.fullmatch(r'^[a-zA-Z0-9]*$', short)) or len(short) > 16:
-                raise ValueError('Указано недопустимое имя для короткой ссылки')
-            if URLMap.query.filter_by(short=short).first() is not None:
-                raise ValueError(f'Имя "{short}" уже занято.')
-        else:
-            short = URLMap.get_unique_short_id()
-        setattr(self, 'short', short)
 
     def from_dict(self, data):
         for field in ['original', 'short']:

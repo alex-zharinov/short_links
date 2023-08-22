@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from flask import jsonify, request
 
-from . import app, db
+from . import app
 from .models import URLMap
 
 
@@ -23,14 +23,17 @@ def add_opinion():
     if 'url' not in data:
         return jsonify({'message':
                         '"url" является обязательным полем!'}), HTTPStatus.BAD_REQUEST
-    original = data.get('url')
-    link_map = URLMap(original=original)
+    if 'custom_id' not in data or data.get('custom_id') is None:
+        custom_id = ''
+    else:
+        custom_id = data.get('custom_id')
     try:
-        link_map.get_short_id(data.get('custom_id'))
+        link_map = URLMap.create_link_map(
+            url=data.get('url'),
+            custom_id=custom_id
+        )
     except Exception as err:
         return jsonify({'message': f'{err}'}), HTTPStatus.BAD_REQUEST
-    db.session.add(link_map)
-    db.session.commit()
     return jsonify(
         {
             'url': link_map.original,
