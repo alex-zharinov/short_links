@@ -73,6 +73,11 @@ flask run
   "url": "https://thepythoncode.com/",
   "custom_id": "thepy1"
 }
+Ответ:
+{
+    "short_link": "http://127.0.0.1:5000/thepy1",
+    "url": "https://thepythoncode.com/"
+}
 
 Более подробно ознакомиться с докуметацией - openapi.yml
 
