@@ -5,7 +5,7 @@ from sqlalchemy.orm import validates
 from validators import url
 
 from . import db
-from .constants import LEN_ID
+from .constants import LEN_ID, MAX_LEN_CUSTOM_ID
 from .utils import get_random_id
 
 
@@ -23,10 +23,9 @@ class URLMap(db.Model):
 
     @validates('short')
     def validate_original(self, key, value):
-        print('value =', type(value))
         if value == '':
             value = self.get_unique_short_id()
-        elif not (re.fullmatch(r'^[a-zA-Z0-9]*$', value)) or len(value) > 16:
+        elif not (re.fullmatch(r'^[a-zA-Z0-9]*$', value)) or len(value) > MAX_LEN_CUSTOM_ID:
             raise ValueError('Указано недопустимое имя для короткой ссылки')
         elif URLMap.query.filter_by(short=value).first() is not None:
             raise ValueError(f'Имя "{value}" уже занято.')

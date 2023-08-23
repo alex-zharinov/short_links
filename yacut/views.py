@@ -4,8 +4,6 @@ from . import app
 from .forms import URLMapForm
 from .models import URLMap
 
-LEN_ID = 6
-
 
 @app.route('/', methods=['GET', 'POST'])
 def index_view():

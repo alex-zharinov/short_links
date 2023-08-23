@@ -1,1 +1,2 @@
 LEN_ID = 6
+MAX_LEN_CUSTOM_ID = 16
