@@ -1,4 +1,4 @@
-### Short Links
+# Short Links
 
 [![short-links workflow](https://github.com/alex-zharinov/short_links/actions/workflows/main.yml/badge.svg)](https://github.com/alex-zharinov/short_links/actions/workflows/main.yml)
 
